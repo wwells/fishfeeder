@@ -1,7 +1,7 @@
 # Stepper Motor configuration
 STEPPER_PINS = [17, 18, 27, 22]  # GPIO pins in BCM mode
 STEPS_PER_REVOLUTION = 2048      # From motor datasheet
-STEPS_PER_FEED = 65             # Adjusted from 73 for more precise rotation
+STEPS_PER_FEED = 55             # Adjusted down from 65 for more precise rotation
 CLOCKWISE = True                 # Direction of rotation
 STEP_DELAY = 0.01               # Delay between steps (controls speed)
 

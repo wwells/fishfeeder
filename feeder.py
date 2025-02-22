@@ -102,8 +102,6 @@ class FishFeeder:
                 time.sleep(TEST_INTERVAL)
         except KeyboardInterrupt:
             logging.info("Test mode interrupted by user")
-        finally:
-            self.cleanup()
 
 def main():
     parser = argparse.ArgumentParser(description='Automatic Fish Feeder')
