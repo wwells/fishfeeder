@@ -1,7 +1,8 @@
 # Stepper Motor configuration
 STEPPER_PINS = [17, 18, 27, 22]  # GPIO pins in BCM mode
 STEPS_PER_REVOLUTION = 2048      # From motor datasheet
-STEPS_PER_FEED = 146            # 1/14th rotation (2048/14 ≈ 146)
+STEPS_PER_FEED = 2048 // 14     # Exactly 1/14th rotation (146.285... rounded to 146)
+CLOCKWISE = True                 # Direction of rotation
 STEP_DELAY = 0.01               # Delay between steps (controls speed)
 
 # Schedule settings
