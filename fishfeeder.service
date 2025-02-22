@@ -1,0 +1,15 @@
+[Unit]
+Description=Automatic Fish Feeder Service
+After=network.target
+
+[Service]
+Type=simple
+User=fishpi
+WorkingDirectory=/home/fishpi/fishfeeder
+Environment=PATH=/home/fishpi/fishfeeder/.venv/bin:$PATH
+ExecStart=/home/fishpi/fishfeeder/.venv/bin/python /home/fishpi/fishfeeder/feeder.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

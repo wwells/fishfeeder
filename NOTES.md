@@ -39,6 +39,10 @@
 
 ### Phase 1: Basic Setup ⏳
 - [x] Project structure
+- [ ] Python environment setup
+    - [ ] Create virtual environment
+    - [ ] Install dependencies
+    - [ ] Configure .bashrc for auto-activation
 - [x] Basic GPIO configuration
 - [x] Initial logging setup
 - [ ] Servo control function
@@ -58,7 +62,10 @@
 - [ ] Power failure recovery
 
 ### Phase 4: Production Ready
-- [ ] System service setup
+- [ ] Create systemd service file
+    - [ ] Configure with venv path
+    - [ ] Set up auto-restart
+    - [ ] Configure logging
 - [ ] Auto-start configuration
 - [ ] Monitoring
 - [ ] Documentation
@@ -72,6 +79,8 @@
 - [ ] Power cycle behavior
 
 ## Configuration Notes
+- Virtual environment: .venv in project directory
+- Auto-activation via .bashrc
 - Default servo angle: 30° per feed
 - Feed schedule: Once daily
 - Test mode: 5 iterations, 10s apart

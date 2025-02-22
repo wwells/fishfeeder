@@ -5,7 +5,19 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 ## Setup
 
 1. Clone this repository
-2. Install dependencies: `pip install -r requirements.txt`
+2. Set up Python environment:
+    ```bash
+    # Install required system package
+    sudo apt-get update
+    sudo apt-get install python3-venv
+
+    # Create and activate virtual environment
+    python3 -m venv .venv
+    source .venv/bin/activate
+
+    # Install dependencies
+    pip install -r requirements.txt
+    ```
 3. Configure your settings in `config.py`
 4. Run the feeder: `python feeder.py`
 
