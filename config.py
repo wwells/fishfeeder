@@ -10,7 +10,7 @@ FEED_TIME = "10:00"  # 24-hour format
 FEED_DURATION = 1    # seconds to hold position
 
 # Test mode settings
-TEST_INTERVAL = 10   # seconds between feeds in test mode
+TEST_INTERVAL = 5   # seconds between feeds in test mode
 TEST_ITERATIONS = 5  # number of test feeds to perform
 
 # Logging
