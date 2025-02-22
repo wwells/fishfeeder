@@ -11,11 +11,17 @@ class FishFeeder:
     def __init__(self):
         self.setup_logging()
         self.setup_gpio()
+        # Full step sequence (might provide more torque)
         self.step_sequence = [
-            [1,0,0,0],
-            [0,1,0,0],
-            [0,0,1,0],
-            [0,0,0,1]
+            [1,1,0,0],
+            [0,1,1,0],
+            [0,0,1,1],
+            [1,0,0,1]
+        ] if CLOCKWISE else [
+            [1,0,0,1],
+            [0,0,1,1],
+            [0,1,1,0],
+            [1,1,0,0]
         ]
         logging.info("Fish feeder initialized")
 
@@ -60,15 +66,23 @@ class FishFeeder:
     def stepper_step(self, steps):
         """Rotate stepper motor by given number of steps"""
         logging.debug(f"Moving stepper motor {steps} steps")
-        for _ in range(steps):
-            for step in self.step_sequence:
-                for i in range(len(STEPPER_PINS)):
-                    GPIO.output(STEPPER_PINS[i], step[i])
-                time.sleep(STEP_DELAY)  # Control motor speed
+        try:
+            for _ in range(abs(steps)):
+                for step in self.step_sequence:
+                    for i in range(len(STEPPER_PINS)):
+                        GPIO.output(STEPPER_PINS[i], step[i])
+                    time.sleep(STEP_DELAY)
 
-        # Turn off all pins after moving
-        for pin in STEPPER_PINS:
-            GPIO.output(pin, GPIO.LOW)
+                # Optional: log progress for long rotations
+                if _ % 50 == 0:
+                    logging.debug(f"Completed {_} steps")
+
+            # Turn off all pins after moving
+            for pin in STEPPER_PINS:
+                GPIO.output(pin, GPIO.LOW)
+        except Exception as e:
+            logging.error(f"Error during step: {str(e)}")
+            raise
 
     def feed_fish(self):
         try:
