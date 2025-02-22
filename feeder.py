@@ -4,6 +4,7 @@ import schedule
 import logging
 import argparse
 import os
+import sys
 from config import (
     SERVO_PIN, SERVO_FREQ,
     SERVO_MIN_DUTY, SERVO_MAX_DUTY, SERVO_STEP_ANGLE,
@@ -24,11 +25,22 @@ class FishFeeder:
         if log_dir and not os.path.exists(log_dir):
             os.makedirs(log_dir)
 
+        # Set up logging to file
         logging.basicConfig(
-            filename=LOG_FILE,
             level=getattr(logging, LOG_LEVEL),
-            format='%(asctime)s - %(levelname)s - %(message)s'
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[
+                # File handler
+                logging.FileHandler(LOG_FILE),
+                # Console handler
+                logging.StreamHandler()
+            ]
         )
+
+        # Optionally increase verbosity for test mode
+        if '--test' in sys.argv:
+            logging.getLogger().setLevel(logging.DEBUG)
+            logging.debug("Debug logging enabled for test mode")
 
     def setup_gpio(self):
         GPIO.setmode(GPIO.BCM)
