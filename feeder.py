@@ -3,7 +3,14 @@ import time
 import schedule
 import logging
 import argparse
-from config import *
+import os
+from config import (
+    SERVO_PIN, SERVO_FREQ,
+    SERVO_MIN_DUTY, SERVO_MAX_DUTY, SERVO_STEP_ANGLE,
+    FEED_TIME, FEED_DURATION,
+    TEST_INTERVAL, TEST_ITERATIONS,
+    LOG_FILE, LOG_LEVEL
+)
 
 class FishFeeder:
     def __init__(self):
@@ -12,6 +19,11 @@ class FishFeeder:
         logging.info("Fish feeder initialized")
 
     def setup_logging(self):
+        # Create log directory if it doesn't exist
+        log_dir = os.path.dirname(LOG_FILE)
+        if log_dir and not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+
         logging.basicConfig(
             filename=LOG_FILE,
             level=getattr(logging, LOG_LEVEL),
