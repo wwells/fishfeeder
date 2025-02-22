@@ -67,15 +67,15 @@ class FishFeeder:
         """Rotate stepper motor by given number of steps"""
         logging.debug(f"Moving stepper motor {steps} steps")
         try:
-            for _ in range(abs(steps)):
+            for step_count in range(1, abs(steps) + 1):
                 for step in self.step_sequence:
                     for i in range(len(STEPPER_PINS)):
                         GPIO.output(STEPPER_PINS[i], step[i])
                     time.sleep(STEP_DELAY)
 
                 # Optional: log progress for long rotations
-                if _ % 50 == 0:
-                    logging.debug(f"Completed {_} steps")
+                if step_count % 50 == 0:
+                    logging.debug(f"Completed {step_count} of {steps} steps")
 
             # Turn off all pins after moving
             for pin in STEPPER_PINS:
