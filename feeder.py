@@ -5,18 +5,18 @@ import logging
 import argparse
 import os
 import sys
-from config import (
-    SERVO_PIN, SERVO_FREQ,
-    SERVO_MIN_DUTY, SERVO_MAX_DUTY, SERVO_STEP_ANGLE,
-    FEED_TIME, FEED_DURATION,
-    TEST_INTERVAL, TEST_ITERATIONS,
-    LOG_FILE, LOG_LEVEL
-)
+from config import *
 
 class FishFeeder:
     def __init__(self):
         self.setup_logging()
         self.setup_gpio()
+        self.step_sequence = [
+            [1,0,0,0],
+            [0,1,0,0],
+            [0,0,1,0],
+            [0,0,0,1]
+        ]
         logging.info("Fish feeder initialized")
 
     def setup_logging(self):
@@ -44,42 +44,37 @@ class FishFeeder:
 
     def setup_gpio(self):
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(SERVO_PIN, GPIO.OUT)
-        self.servo = GPIO.PWM(SERVO_PIN, SERVO_FREQ)
-        self.servo.start(0)
+        GPIO.setwarnings(False)
+        # Setup all pins as outputs
+        for pin in STEPPER_PINS:
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, GPIO.LOW)
         logging.info("GPIO setup completed")
 
     def cleanup(self):
-        self.servo.stop()
+        for pin in STEPPER_PINS:
+            GPIO.output(pin, GPIO.LOW)
         GPIO.cleanup()
         logging.info("GPIO cleanup completed")
 
-    def angle_to_duty_cycle(self, angle):
-        """Convert angle (0-180) to duty cycle."""
-        duty = SERVO_MIN_DUTY + (angle/180) * (SERVO_MAX_DUTY - SERVO_MIN_DUTY)
-        return duty
+    def stepper_step(self, steps):
+        """Rotate stepper motor by given number of steps"""
+        logging.debug(f"Moving stepper motor {steps} steps")
+        for _ in range(steps):
+            for step in self.step_sequence:
+                for i in range(len(STEPPER_PINS)):
+                    GPIO.output(STEPPER_PINS[i], step[i])
+                time.sleep(STEP_DELAY)  # Control motor speed
 
-    def rotate_servo(self, angle, duration=1):
-        """Rotate servo to specified angle and hold for duration."""
-        try:
-            duty = self.angle_to_duty_cycle(angle)
-            logging.debug(f"Setting servo to angle {angle}° (duty cycle: {duty:.1f})")
-            self.servo.ChangeDutyCycle(duty)
-            time.sleep(duration)
-        except Exception as e:
-            logging.error(f"Error rotating servo: {str(e)}")
+        # Turn off all pins after moving
+        for pin in STEPPER_PINS:
+            GPIO.output(pin, GPIO.LOW)
 
     def feed_fish(self):
         try:
             logging.info("Starting feed cycle")
-
-            # Rotate to next compartment
-            logging.debug(f"Rotating {SERVO_STEP_ANGLE}° to next compartment")
-            self.rotate_servo(SERVO_STEP_ANGLE, FEED_DURATION)
-
-            # Stop PWM signal to prevent jitter
-            self.servo.ChangeDutyCycle(0)
-
+            logging.debug(f"Rotating {STEPS_PER_FEED} steps")
+            self.stepper_step(STEPS_PER_FEED)
             logging.info("Feed cycle completed")
         except Exception as e:
             logging.error(f"Error during feeding: {str(e)}")
