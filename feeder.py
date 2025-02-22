@@ -54,10 +54,32 @@ class FishFeeder:
         GPIO.cleanup()
         logging.info("GPIO cleanup completed")
 
+    def angle_to_duty_cycle(self, angle):
+        """Convert angle (0-180) to duty cycle."""
+        duty = SERVO_MIN_DUTY + (angle/180) * (SERVO_MAX_DUTY - SERVO_MIN_DUTY)
+        return duty
+
+    def rotate_servo(self, angle, duration=1):
+        """Rotate servo to specified angle and hold for duration."""
+        try:
+            duty = self.angle_to_duty_cycle(angle)
+            logging.debug(f"Setting servo to angle {angle}° (duty cycle: {duty:.1f})")
+            self.servo.ChangeDutyCycle(duty)
+            time.sleep(duration)
+        except Exception as e:
+            logging.error(f"Error rotating servo: {str(e)}")
+
     def feed_fish(self):
         try:
             logging.info("Starting feed cycle")
-            # TODO: Implement servo rotation logic
+
+            # Rotate to next compartment
+            logging.debug(f"Rotating {SERVO_STEP_ANGLE}° to next compartment")
+            self.rotate_servo(SERVO_STEP_ANGLE, FEED_DURATION)
+
+            # Stop PWM signal to prevent jitter
+            self.servo.ChangeDutyCycle(0)
+
             logging.info("Feed cycle completed")
         except Exception as e:
             logging.error(f"Error during feeding: {str(e)}")
