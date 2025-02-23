@@ -36,3 +36,8 @@ ENV/
 .idea/
 .vscode/
 *.swp
+
+# Backup files
+*.original
+*.bak
+*~
