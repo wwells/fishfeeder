@@ -103,15 +103,28 @@ class FishFeeder:
         except KeyboardInterrupt:
             logging.info("Test mode interrupted by user")
 
+    def calibrate_mode(self):
+        """Perform one full revolution to verify steps calculation"""
+        try:
+            logging.info("Starting calibration - one full revolution")
+            logging.info("Using 511 steps for full revolution")
+            self.stepper_step(511)
+            logging.info("Calibration complete - verify the motor made exactly one full turn")
+        except Exception as e:
+            logging.error(f"Error during calibration: {str(e)}")
+
 def main():
     parser = argparse.ArgumentParser(description='Automatic Fish Feeder')
     parser.add_argument('--test', action='store_true', help='Run in test mode')
+    parser.add_argument('--calibrate', action='store_true', help='Run calibration mode')
     args = parser.parse_args()
 
     feeder = FishFeeder()
 
     try:
-        if args.test:
+        if args.calibrate:
+            feeder.calibrate_mode()
+        elif args.test:
             feeder.test_mode()
         else:
             schedule.every().day.at(FEED_TIME).do(feeder.feed_fish)
