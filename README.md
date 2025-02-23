@@ -12,7 +12,7 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
     sudo apt-get install python3-venv
 
     # Create and activate virtual environment
-    python3 -m venv .venv
+    python3.11 -m venv .venv
     source .venv/bin/activate
 
     # Install dependencies
