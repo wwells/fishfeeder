@@ -60,6 +60,10 @@ Shared project plan documentation to support ai coding sessions.
 - [x] Test rotation accuracy
 - [x] Calibrate timing
 - [x] Basic error handling
+- [ ] Adjust feed amount
+    - [ ] Add FEEDS_PER_DAY to config
+    - [ ] Update feed_fish() to handle multiple rotations
+    - [ ] Test with actual food amounts
 
 ### Phase 3: Scheduling (Next Up)
 - [ ] Test schedule functionality
@@ -79,6 +83,10 @@ Shared project plan documentation to support ai coding sessions.
     - [ ] Configure with venv path
     - [ ] Set up auto-restart
     - [ ] Configure logging
+- [ ] Implement log rotation
+    - [ ] Add max log size
+    - [ ] Configure backup count
+    - [ ] Test log cleanup
 - [ ] Add status monitoring
     - [x] Basic status (last feed, active state)
     - [ ] Next scheduled feed time

@@ -86,11 +86,14 @@ class FishFeeder:
             logging.error(f"Error during step: {str(e)}")
             raise
 
-    def feed_fish(self):
+    def feed_fish(self, rotations=None):
+        """Feed fish with specified number of rotations (defaults to FEEDS_PER_DAY)"""
         try:
+            rotations = rotations or FEEDS_PER_DAY
             logging.info("Starting feed cycle")
-            logging.debug(f"Rotating {STEPS_PER_FEED} steps")
-            self.stepper_step(STEPS_PER_FEED)
+            for i in range(rotations):
+                logging.debug(f"Rotation {i+1}/{rotations}: {STEPS_PER_FEED} steps")
+                self.stepper_step(STEPS_PER_FEED)
             self.save_state()  # Record successful feed
             logging.info("Feed cycle completed")
         except Exception as e:
@@ -102,6 +105,7 @@ class FishFeeder:
             for i in range(TEST_ITERATIONS):
                 logging.info(f"Test iteration {i+1}")
                 self.feed_fish()
+                # test with two slots of food dropping instead of 1.
                 self.feed_fish()
                 time.sleep(TEST_INTERVAL)
         except KeyboardInterrupt:
