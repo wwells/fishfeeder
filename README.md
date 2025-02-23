@@ -18,7 +18,8 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
     # Install dependencies
     pip install -r requirements.txt
 
-    # For easier use, can add this to .bashrc in the pi
+    # For easier use, when sshing into the pi,
+    # can add this to .bashrc in the pi
     if [ -d "$HOME/fishfeeder" ]; then
         cd "$HOME/fishfeeder"
         if [ -f ".venv/bin/activate" ]; then
@@ -37,17 +38,7 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 ## Hardware Requirements
 
 - Raspberry Pi
-- Servo Motor
+- Stepper Motor (28BYJ-48 with ULN2003 driver)
+  - Step Angle: 5.625° × 1/64
+  - Steps per Revolution: 512 (using half-stepping)
 - Fish Food Dispenser Disk
-
-
-## TODO
-
-setup the venv, .bashrc to init the venv at ssh login
-
-if [ -d "$HOME/ServoFishFeeder" ]; then
-    cd "$HOME/ServoFishFeeder"
-    if [ -f ".venv/bin/activate" ]; then
-        source .venv/bin/activate
-    fi
-fi

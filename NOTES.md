@@ -4,8 +4,8 @@
 
 ### Hardware
 - Raspberry Pi (any model with GPIO)
-- Servo Motor (Standard 180° rotation)
-- 3D Printed Food Dispenser Disk
+- Stepper Motor (28BYJ-48 with ULN2003 driver)
+- 3D Printed Food Dispenser Disk (14 compartments)
 - Power Supply
 - Fish Food Container
 
@@ -13,6 +13,8 @@
 1. **GPIO Control**
    - Servo motor control
    - PWM signal generation
+   - Stepper motor control
+   - Step sequence handling
    - Pin initialization and cleanup
 
 2. **Scheduling System**
@@ -37,42 +39,61 @@
 
 ## Development Plan
 
-### Phase 1: Basic Setup ⏳
+### Phase 1: Basic Setup ✅
 - [x] Project structure
-- [ ] Python environment setup
-    - [ ] Create virtual environment
-    - [ ] Install dependencies
-    - [ ] Configure .bashrc for auto-activation
+- [x] Python environment setup
+    - [x] Create virtual environment
+    - [x] Install dependencies
+    - [x] Configure .bashrc for auto-activation
 - [x] Basic GPIO configuration
 - [x] Initial logging setup
-- [ ] Servo control function
-- [ ] Basic CLI arguments
+- [x] Stepper motor control
+- [x] Basic CLI arguments
+- [x] Test mode implementation
+- [x] Calibration mode
 
-### Phase 2: Core Functions
-- [ ] Implement feed_fish() method
-- [ ] Add angle calculations
-- [ ] Test servo rotation
-- [ ] Calibrate timing
-- [ ] Error handling
+### Phase 2: Core Functions ⏳
+- [x] Implement feed_fish() method
+- [x] Motor step calculations
+- [x] Test rotation accuracy
+- [x] Calibrate timing
+- [x] Basic error handling
 
-### Phase 3: Scheduling
-- [ ] Daily schedule implementation
-- [ ] Multiple feed times
-- [ ] Schedule persistence
-- [ ] Power failure recovery
+### Phase 3: Scheduling (Next Up)
+- [ ] Test daily schedule implementation
+- [ ] Verify schedule persistence
+- [ ] Add schedule logging
+- [ ] Power failure recovery strategy
+
+### Phase 3: Scheduling (Next Up)
+- [ ] Test schedule functionality
+    - [ ] Test with shorter intervals for verification
+    - [ ] Verify timing accuracy
+    - [ ] Test schedule.every().day behavior
+- [ ] Enhance schedule logging
+    - [ ] Log next scheduled feed time on startup
+    - [ ] Log schedule changes/interruptions
+- [ ] Implement recovery handling
+    - [ ] Use state file to detect missed feeds
+    - [ ] Define recovery behavior (skip vs feed)
+    - [ ] Test recovery scenarios
 
 ### Phase 4: Production Ready
 - [ ] Create systemd service file
     - [ ] Configure with venv path
     - [ ] Set up auto-restart
     - [ ] Configure logging
-- [ ] Auto-start configuration
-- [ ] Monitoring
-- [ ] Documentation
-- [ ] Backup/restore procedure
+- [ ] Add status monitoring
+    - [x] Basic status (last feed, active state)
+    - [ ] Next scheduled feed time
+    - [ ] Feed success/failure stats
+    - [ ] GPIO/hardware status
+    - [ ] Service status
+- [ ] Complete documentation
+- [ ] Include 3d printer files and any photo assets
 
 ## Testing Checklist
-- [ ] Servo rotation accuracy
+- [x] Motor rotation accuracy
 - [ ] Food dispensing reliability
 - [ ] Schedule accuracy
 - [ ] Error recovery
@@ -81,10 +102,10 @@
 ## Configuration Notes
 - Virtual environment: .venv in project directory
 - Auto-activation via .bashrc
-- Default servo angle: 30° per feed
-- Feed schedule: Once daily
-- Test mode: 5 iterations, 10s apart
-- Logging: Daily rotation, INFO level
+- Steps per feed: 37 (1/14th of 512)
+- Feed schedule: Once daily at 10:00
+- Test mode: 5 iterations, 5s apart
+- Logging: Both file and console
 
 ## Future Enhancements
 1. Web interface for monitoring

@@ -5,6 +5,8 @@ import logging
 import argparse
 import os
 import sys
+import json
+from datetime import datetime
 from config import *
 
 class FishFeeder:
@@ -89,6 +91,7 @@ class FishFeeder:
             logging.info("Starting feed cycle")
             logging.debug(f"Rotating {STEPS_PER_FEED} steps")
             self.stepper_step(STEPS_PER_FEED)
+            self.save_state()  # Record successful feed
             logging.info("Feed cycle completed")
         except Exception as e:
             logging.error(f"Error during feeding: {str(e)}")
@@ -113,20 +116,50 @@ class FishFeeder:
         except Exception as e:
             logging.error(f"Error during calibration: {str(e)}")
 
+    def save_state(self):
+        state = {
+            'last_feed': datetime.now().isoformat(),
+            'active': True
+        }
+        with open(STATE_FILE, 'w') as f:
+            json.dump(state, f)
+
+    def load_state(self):
+        try:
+            with open(STATE_FILE, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {'last_feed': None, 'active': False}
+
 def main():
     parser = argparse.ArgumentParser(description='Automatic Fish Feeder')
     parser.add_argument('--test', action='store_true', help='Run in test mode')
     parser.add_argument('--calibrate', action='store_true', help='Run calibration mode')
+    parser.add_argument('--status', action='store_true', help='Show feeder status and exit')
     args = parser.parse_args()
 
     feeder = FishFeeder()
 
     try:
+        if args.status:
+            state = feeder.load_state()
+            if state['last_feed']:
+                logging.info(f"Status: Last feed: {state['last_feed']}, Active: {state['active']}")
+            else:
+                logging.info("Status: No previous feeds recorded")
+            return
+
         if args.calibrate:
             feeder.calibrate_mode()
         elif args.test:
             feeder.test_mode()
         else:
+            # Load last state
+            state = feeder.load_state()
+            if state['last_feed']:
+                last_feed = datetime.fromisoformat(state['last_feed'])
+                logging.info(f"Last feed occurred at: {last_feed}")
+
             schedule.every().day.at(FEED_TIME).do(feeder.feed_fish)
             logging.info(f"Scheduled daily feeding at {FEED_TIME}")
 

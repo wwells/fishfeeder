@@ -24,6 +24,9 @@ var/
 # Logs
 *.log
 
+# State files
+feeder_state.json
+
 # Environment
 .env
 venv/
