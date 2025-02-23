@@ -60,12 +60,6 @@
 - [x] Basic error handling
 
 ### Phase 3: Scheduling (Next Up)
-- [ ] Test daily schedule implementation
-- [ ] Verify schedule persistence
-- [ ] Add schedule logging
-- [ ] Power failure recovery strategy
-
-### Phase 3: Scheduling (Next Up)
 - [ ] Test schedule functionality
     - [ ] Test with shorter intervals for verification
     - [ ] Verify timing accuracy
