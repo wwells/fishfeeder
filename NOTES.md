@@ -60,10 +60,10 @@ Shared project plan documentation to support ai coding sessions.
 - [x] Test rotation accuracy
 - [x] Calibrate timing
 - [x] Basic error handling
-- [ ] Adjust feed amount
-    - [ ] Add FEEDS_PER_DAY to config
-    - [ ] Update feed_fish() to handle multiple rotations
-    - [ ] Test with actual food amounts
+- [x] Adjust feed amount
+    - [x] Add FEEDS_PER_DAY to config
+    - [x] Update feed_fish() to handle multiple rotations
+    - [x] Test with actual food amounts
 
 ### Phase 3: Scheduling (Next Up)
 - [ ] Test schedule functionality
@@ -98,7 +98,7 @@ Shared project plan documentation to support ai coding sessions.
 
 ## Testing Checklist
 - [x] Motor rotation accuracy
-- [ ] Food dispensing reliability
+- [x] Food dispensing reliability
 - [ ] Schedule accuracy
 - [ ] Error recovery
 - [ ] Power cycle behavior
