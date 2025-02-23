@@ -1,5 +1,7 @@
 # Fish Feeder Project Notes
 
+Shared project plan documentation to support ai coding sessions.
+
 ## Components
 
 ### Hardware
@@ -100,10 +102,3 @@
 - Feed schedule: Once daily at 10:00
 - Test mode: 5 iterations, 5s apart
 - Logging: Both file and console
-
-## Future Enhancements
-1. Web interface for monitoring
-2. Mobile app notifications
-3. Feed amount adjustment
-4. Multiple feed schedules
-5. Food level monitoring
