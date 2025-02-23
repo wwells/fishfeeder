@@ -15,7 +15,7 @@ FEED_DURATION = 1    # seconds to hold position
 
 # Test mode settings
 TEST_INTERVAL = 5    # seconds between feeds in test mode
-TEST_ITERATIONS = 5  # number of test feeds to perform
+TEST_ITERATIONS = 2  # number of test feeds to perform
 
 # Logging
 LOG_FILE = "fishfeeder.log"

@@ -102,6 +102,7 @@ class FishFeeder:
             for i in range(TEST_ITERATIONS):
                 logging.info(f"Test iteration {i+1}")
                 self.feed_fish()
+                self.feed_fish()
                 time.sleep(TEST_INTERVAL)
         except KeyboardInterrupt:
             logging.info("Test mode interrupted by user")
