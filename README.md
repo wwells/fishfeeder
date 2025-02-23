@@ -42,3 +42,7 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
   - Step Angle: 5.625° × 1/64
   - Steps per Revolution: 512 (using half-stepping)
 - Fish Food Dispenser Disk
+
+## Timezones
+
+Remain super fun ;)   Be sure your PI is set to the desired timezone to ensure the schedule meets your expectations (`sudo raspi-config` and select `Localisation`)
