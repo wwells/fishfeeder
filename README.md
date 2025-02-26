@@ -37,6 +37,7 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 - Normal mode: `python feeder.py`
 - Test mode: `python feeder.py --test`
 - Calibration mode: `python feeder.py --calibrate`
+- Test schedule mode: `python feeder.py --test-schedule`
 
 ## Timezones
 
