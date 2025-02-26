@@ -167,26 +167,20 @@ def main():
         elif args.test:
             feeder.test_mode()
         elif args.test_schedule:
-            # Create a job but don't schedule it yet
-            job = schedule.every(TEST_SCHEDULE_INTERVAL).seconds.do(feeder.feed_fish)
+            schedule.every(TEST_SCHEDULE_INTERVAL).seconds.do(feeder.feed_fish)
             next_feed = feeder.get_next_feed_time()
-            logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} minutes")
+            logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} seconds")
             logging.info(f"Next feed scheduled for: {next_feed}")
             logging.info(f"Will run {TEST_SCHEDULE_ITERATIONS} times")
 
             feeds_completed = 0
             while feeds_completed < TEST_SCHEDULE_ITERATIONS:
-                logging.debug("Checking schedule...")
                 if schedule.run_pending():
                     feeds_completed += 1
-                    if feeds_completed == TEST_SCHEDULE_ITERATIONS:
-                        logging.info("Schedule test completed")
-                        schedule.cancel_job(job)  # Stop scheduling new feeds
+                    if feeds_completed >= TEST_SCHEDULE_ITERATIONS:
                         break
-                    else:
-                        next_run = schedule.next_run()
-                        logging.info(f"Next feed scheduled for: {next_run}")
                 time.sleep(TEST_SCHEDULER_HEARTBEAT)
+            logging.info("Schedule test completed")
         else:
             state = feeder.load_state()
             if state['last_feed']:
