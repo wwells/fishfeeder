@@ -46,7 +46,7 @@ class FishFeeder:
         )
 
         # Optionally increase verbosity for test modes
-        if '--test' in sys.argv or '--test-schedule' in sys.argv:
+        if '--test-hardware' in sys.argv or '--test-schedule' in sys.argv:
             logging.getLogger().setLevel(logging.DEBUG)
             logging.debug("Debug logging enabled for testing")
 
@@ -171,15 +171,42 @@ class FishFeeder:
             return next_run.strftime("%Y-%m-%d %H:%M:%S")
         return None
 
+    def check_missed_feeds(self):
+        """Check for and handle any missed feeds"""
+        if not RECOVERY_ENABLED:
+            return
+
+        state = self.load_state()
+        if not state['last_feed']:
+            return
+
+        last_feed = datetime.fromisoformat(state['last_feed'])
+        scheduled_feed = datetime.strptime(f"{datetime.now():%Y-%m-%d} {FEED_TIME}", "%Y-%m-%d %H:%M")
+
+        # If we're past feed time and haven't fed today
+        if datetime.now() > scheduled_feed and last_feed.date() < datetime.now().date():
+            delay = (datetime.now() - scheduled_feed).total_seconds()
+
+            if delay <= MAX_RECOVERY_DELAY:
+                if RECOVERY_MODE == "feed":
+                    logging.warning(f"Missed feed detected. Last feed: {last_feed}. Recovering...")
+                    self.feed_fish()
+                else:
+                    logging.warning(f"Missed feed detected. Last feed: {last_feed}. Skipping...")
+            else:
+                logging.warning(f"Missed feed detected but outside recovery window ({delay}s > {MAX_RECOVERY_DELAY}s)")
+
 def main():
     parser = argparse.ArgumentParser(description='Automatic Fish Feeder')
-    parser.add_argument('--test', action='store_true', help='Run in test mode')
+    parser.add_argument('--test-hardware', action='store_true', help='Run hardware test - feed cycles with short delay')
     parser.add_argument('--calibrate', action='store_true', help='Run calibration mode')
     parser.add_argument('--status', action='store_true', help='Show feeder status and exit')
     parser.add_argument('--test-schedule', action='store_true',
                        help='Test schedule with shorter intervals (every few minutes)')
     parser.add_argument('--test-state', action='store_true',
                        help='Test state file handling with success/failure scenarios')
+    parser.add_argument('--test-recovery', action='store_true',
+                       help='Test recovery handling with simulated missed feeds')
     args = parser.parse_args()
 
     feeder = FishFeeder()
@@ -205,7 +232,7 @@ def main():
 
         if args.calibrate:
             feeder.calibrate_mode()
-        elif args.test:
+        elif args.test_hardware:
             feeder.test_mode()
         elif args.test_schedule:
             feeds_completed = 0
@@ -250,11 +277,30 @@ def main():
 
             logging.info("Checking state after failure:")
             os.system(f"{sys.executable} {sys.argv[0]} --status")
+        elif args.test_recovery:
+            logging.info("Testing recovery handling...")
+
+            # Simulate a missed feed by setting last feed to yesterday
+            yesterday = datetime.now().replace(day=datetime.now().day-1)
+            state = {
+                'last_feed': yesterday.isoformat(),
+                'active': True,
+                'feed_count': {'total': 10, 'successful': 10, 'failed': 0},
+                'last_feed_status': 'success'
+            }
+            with open(STATE_FILE, 'w') as f:
+                json.dump(state, f)
+
+            logging.info("Simulated missed feed. Checking recovery...")
+            feeder.check_missed_feeds()
         else:
             state = feeder.load_state()
             if state['last_feed']:
                 last_feed = datetime.fromisoformat(state['last_feed'])
                 logging.info(f"Last feed occurred at: {last_feed}")
+
+            # Check for missed feeds on startup
+            feeder.check_missed_feeds()
 
             schedule.every().day.at(FEED_TIME).do(feeder.feed_fish)
             next_feed = feeder.get_next_feed_time()

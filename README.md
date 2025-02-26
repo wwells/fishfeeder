@@ -35,11 +35,44 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 ## Usage
 
 - Normal mode: `python feeder.py`
-- Test mode: `python feeder.py --test`
 - Calibration mode: `python feeder.py --calibrate`
+- Test mode: `python feeder.py --test`
+- Test hardware: `python feeder.py --test-hardware`
 - Test schedule mode: `python feeder.py --test-schedule`
 - Test state tracking: `python feeder.py --test-state`
+- Test recovery: `python feeder.py --test-recovery`
 - Show status: `python feeder.py --status`
+
+### Test Modes
+- `--test-hardware`: Quick hardware test - runs 2 feed cycles 5 seconds apart
+- `--test-schedule`: Tests scheduling with shorter intervals
+- `--test-state`: Tests state file handling with success/failure scenarios
+- `--test-recovery`: Tests recovery handling with simulated missed feeds
+- `--calibrate`: Performs one full motor revolution for calibration
+
+### Recovery Handling
+The feeder can detect and handle missed feeds (e.g., due to power outages):
+
+- Checks for missed feeds on startup
+- Configurable recovery window (default: 1 hour)
+- Two recovery modes:
+  - "feed": Attempt to feed if within recovery window
+  - "skip": Log the miss but wait for next scheduled feed
+
+Configure recovery behavior in `config.py`:
+```python
+RECOVERY_MODE = "skip"  # Options: "feed" or "skip"
+MAX_RECOVERY_DELAY = 3600  # Maximum seconds to attempt recovery
+RECOVERY_ENABLED = True  # Enable/disable recovery handling
+```
+
+### Status Information
+The status command shows:
+- Last feed time
+- Feed status (success/failure)
+- Feed counts (total/successful/failed)
+- Next scheduled feed
+- Active state
 
 ## Timezones
 
@@ -62,11 +95,3 @@ Inspired by https://www.the-diy-life.com/make-an-arduino-based-automatic-fish-fe
 Source: https://ben.akrin.com/driving-a-28byj-48-stepper-motor-uln2003-driver-with-a-raspberry-pi/
 
 ![Wiring Diagram](assets/wiring.png)
-
-### Status Information
-The status command shows:
-- Last feed time
-- Feed status (success/failure)
-- Feed counts (total/successful/failed)
-- Next scheduled feed
-- Active state
