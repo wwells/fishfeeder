@@ -13,12 +13,14 @@ STEP_DELAY = 0.01              # Delay between steps (controls speed)
 FEED_TIME = "08:00"    # 24-hour format
 FEED_DURATION = 1      # seconds to hold position
 FEEDS_PER_DAY = 2     # Number of feed compartments to dispense daily
+SCHEDULER_HEARTBEAT = 60     # How often to check schedule in production (seconds)
 
 # Test mode settings
 TEST_INTERVAL = 5    # seconds between feeds in test mode
 TEST_ITERATIONS = 2  # number of test feeds to perform
 TEST_SCHEDULE_ITERATIONS = 3  # number of schedule test feeds to perform
 TEST_SCHEDULE_INTERVAL = 1  # Minutes between feeds when testing schedule
+TEST_SCHEDULER_HEARTBEAT = 1 # How often to check schedule in test mode (seconds)
 
 # Logging
 LOG_FILE = "fishfeeder.log"

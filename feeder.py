@@ -177,12 +177,12 @@ def main():
             while feeds_completed < TEST_SCHEDULE_ITERATIONS:
                 if schedule.run_pending():
                     feeds_completed += 1
-                    if feeds_completed == TEST_SCHEDULE_ITERATIONS:
-                        logging.info("Schedule test completed")
-                    else:
+                    if feeds_completed < TEST_SCHEDULE_ITERATIONS:
                         next_feed = feeder.get_next_feed_time()
                         logging.info(f"Next feed scheduled for: {next_feed}")
-                time.sleep(1) # slow down scheduler checks
+                    else:
+                        logging.info("Schedule test completed")
+                time.sleep(TEST_SCHEDULER_HEARTBEAT)
         else:
             state = feeder.load_state()
             if state['last_feed']:
@@ -199,8 +199,7 @@ def main():
                     schedule.run_pending()
                 except Exception as e:
                     logging.error(f"Schedule interrupted: {str(e)}")
-                    # Could implement retry logic here
-                time.sleep(60)
+                time.sleep(SCHEDULER_HEARTBEAT)
     except KeyboardInterrupt:
         logging.warning("Program manually interrupted - schedule stopped")
         logging.info("Program interrupted by user")
