@@ -167,7 +167,8 @@ def main():
         elif args.test:
             feeder.test_mode()
         elif args.test_schedule:
-            schedule.every(TEST_SCHEDULE_INTERVAL).seconds.do(feeder.feed_fish)
+            # Create a job but don't schedule it yet
+            job = schedule.every(TEST_SCHEDULE_INTERVAL).seconds.do(feeder.feed_fish)
             next_feed = feeder.get_next_feed_time()
             logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} minutes")
             logging.info(f"Next feed scheduled for: {next_feed}")
@@ -180,6 +181,7 @@ def main():
                     feeds_completed += 1
                     if feeds_completed == TEST_SCHEDULE_ITERATIONS:
                         logging.info("Schedule test completed")
+                        schedule.cancel_job(job)  # Stop scheduling new feeds
                         break
                     else:
                         next_run = schedule.next_run()
