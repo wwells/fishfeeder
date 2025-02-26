@@ -97,6 +97,7 @@ The status command shows:
 - `--test-state`: Tests state file handling with success/failure scenarios
 - `--test-recovery`: Tests recovery handling with simulated missed feeds
 - `--test-service`: Tests systemd service behavior (signal handling, cleanup)
+- `--test-logs`: Tests log rotation by generating many log entries
 - `--calibrate`: Performs one full motor revolution for calibration
 
 ### Testing Service Operation

@@ -217,6 +217,8 @@ def main():
                        help='Test recovery handling with simulated missed feeds')
     parser.add_argument('--test-service', action='store_true',
                        help='Test service behavior (signal handling, cleanup)')
+    parser.add_argument('--test-logs', action='store_true',
+                       help='Test log rotation by generating log entries')
     args = parser.parse_args()
 
     feeder = FishFeeder()
@@ -327,6 +329,22 @@ def main():
                 time.sleep(1)
 
             logging.info("Service test completed")
+        elif args.test_logs:
+            logging.info("Testing log rotation...")
+            logging.info("Will generate enough logs to trigger rotation")
+
+            # Generate enough logs to trigger rotation
+            for i in range(10000):
+                logging.info(f"Test log entry {i} to force rotation")
+                if i % 1000 == 0:
+                    logging.info(f"Generated {i} log entries")
+
+            # Check for rotated files
+            import glob
+            log_files = glob.glob(f"{LOG_FILE}.*")
+            logging.info(f"Found {len(log_files)} rotated log files:")
+            for log_file in log_files:
+                logging.info(f"  - {log_file}")
         else:
             state = feeder.load_state()
             if state['last_feed']:
