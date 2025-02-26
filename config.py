@@ -15,6 +15,11 @@ FEED_DURATION = 1  # seconds to hold position
 FEEDS_PER_DAY = 2  # Number of feed compartments to dispense daily
 SCHEDULER_HEARTBEAT = 300  # How often to check schedule in production (seconds)
 
+# Recovery settings
+RECOVERY_MODE = "skip"  # Options: "feed" or "skip"
+MAX_RECOVERY_DELAY = 3600  # Maximum seconds after missed feed to attempt recovery (1 hour)
+RECOVERY_ENABLED = True  # Enable/disable recovery handling
+
 # Test mode settings
 TEST_INTERVAL = 5    # seconds between feeds in test mode
 TEST_ITERATIONS = 2  # number of test feeds to perform
