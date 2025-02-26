@@ -4,6 +4,8 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 
 This could be extended to expose the state file via a web API, but that's not currently implemented (don't want to expose the PI through a home router). In that scenario would be a bit more resilient to failure to "call the neighbors" if something looks _fishy_. :drum:
 
+![Fishpi](assets/fishpi.jpg)
+
 # Software
 
 ## Setup
