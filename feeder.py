@@ -45,10 +45,10 @@ class FishFeeder:
             ]
         )
 
-        # Optionally increase verbosity for test mode
-        if '--test' in sys.argv:
+        # Optionally increase verbosity for test modes
+        if '--test' in sys.argv or '--test-schedule' in sys.argv:
             logging.getLogger().setLevel(logging.DEBUG)
-            logging.debug("Debug logging enabled for test mode")
+            logging.debug("Debug logging enabled for testing")
 
     def setup_gpio(self):
         GPIO.setmode(GPIO.BCM)
