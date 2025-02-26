@@ -1,6 +1,6 @@
 # Fish Feeder Project Notes
 
-Shared project plan documentation to support ai coding sessions.
+Shared project specification to support ai coding sessions.
 
 ## Components
 
@@ -54,7 +54,7 @@ Shared project plan documentation to support ai coding sessions.
 - [x] Test mode implementation
 - [x] Calibration mode
 
-### Phase 2: Core Functions ⏳
+### Phase 2: Core Functions ✅
 - [x] Implement feed_fish() method
 - [x] Motor step calculations
 - [x] Test rotation accuracy
@@ -66,14 +66,14 @@ Shared project plan documentation to support ai coding sessions.
     - [x] Test with actual food amounts
 
 ### Phase 3: Scheduling (Next Up)
-- [ ] Test schedule functionality
-    - [ ] Test with shorter intervals for verification
-    - [ ] Verify timing accuracy
-    - [ ] Test schedule.every().day behavior
+- [x] Test schedule functionality
+    - [x] Test with shorter intervals for verification (--test-schedule)
+    - [x] Verify timing accuracy
+    - [x] Test schedule.every().day behavior
 - [ ] Enhance schedule logging
-    - [ ] Log next scheduled feed time on startup
+    - [x] Log next scheduled feed time on startup
     - [ ] Log schedule changes/interruptions
-- [ ] Implement recovery handling
+- [ ] Implement recovery handling (Next)
     - [ ] Use state file to detect missed feeds
     - [ ] Define recovery behavior (skip vs feed)
     - [ ] Test recovery scenarios

@@ -18,6 +18,7 @@ TEST_SCHEDULE_INTERVAL = 1  # Minutes between feeds when testing schedule
 # Test mode settings
 TEST_INTERVAL = 5    # seconds between feeds in test mode
 TEST_ITERATIONS = 2  # number of test feeds to perform
+TEST_SCHEDULE_ITERATIONS = 3  # number of schedule test feeds to perform
 
 # Logging
 LOG_FILE = "fishfeeder.log"
