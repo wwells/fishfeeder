@@ -204,6 +204,20 @@ class FishFeeder:
             else:
                 logging.warning(f"Missed feed detected but outside recovery window ({delay}s > {MAX_RECOVERY_DELAY}s)")
 
+    def check_gpio_health(self):
+        """Check GPIO pin states and configuration"""
+        status = {
+            'gpio_mode': GPIO.getmode(),
+            'pins': {}
+        }
+        for pin in STEPPER_PINS:
+            status['pins'][pin] = {
+                'function': GPIO.gpio_function(pin),  # INPUT/OUTPUT/etc
+                'state': GPIO.input(pin),
+                'configured': True
+            }
+        return status
+
 def main():
     parser = argparse.ArgumentParser(description='Automatic Fish Feeder')
     parser.add_argument('--test-hardware', action='store_true', help='Run hardware test - feed cycles with short delay')
@@ -226,20 +240,14 @@ def main():
     try:
         if args.status:
             state = feeder.load_state()
-            if state['last_feed']:
-                feed_count = state.get('feed_count', {'total': 0, 'successful': 0, 'failed': 0})
-                status_msg = [
-                    f"Last feed: {state['last_feed']}",
-                    f"Status: {state.get('last_feed_status', 'unknown')}",
-                    f"Active: {state['active']}",
-                    f"Total feeds: {feed_count['total']}",
-                    f"Successful: {feed_count['successful']}",
-                    f"Failed: {feed_count['failed']}",
-                    f"Next scheduled: {state.get('next_scheduled_feed', 'unknown')}"
-                ]
-                logging.info("Status:\n - " + "\n - ".join(status_msg))
-            else:
-                logging.info("Status: No previous feeds recorded")
+            hw_status = feeder.check_gpio_health()
+            status_msg = [
+                f"Last feed: {state['last_feed']}",
+                f"Status: {state.get('last_feed_status', 'unknown')}",
+                f"GPIO Mode: {hw_status['gpio_mode']}",
+                f"Pin States: {hw_status['pins']}"
+            ]
+            logging.info("Status:\n - " + "\n - ".join(status_msg))
             return
 
         if args.calibrate:

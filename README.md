@@ -58,6 +58,39 @@ sudo systemctl start fishfeeder
 sudo systemctl status fishfeeder
 ```
 
+To stop the service (e.g., after vacation):
+```bash
+# Stop the service
+sudo systemctl stop fishfeeder
+
+# Optionally disable auto-start
+sudo systemctl disable fishfeeder
+
+# Verify status (should show inactive)
+sudo systemctl status fishfeeder
+
+# Check final state
+python feeder.py --status
+```
+
+The motor will return to a safe state when stopped, and all pins will be cleaned up.
+You can safely leave the service installed for your next vacation.
+
+To clean up state (optional):
+```bash
+# Backup current state
+cp feeder_state.json feeder_state.json.bak
+
+# Reset state file (will be recreated on next start)
+rm feeder_state.json
+
+# Or to keep file with clean state:
+echo '{"last_feed": null, "active": false, "feed_count": {"total": 0, "successful": 0, "failed": 0}}' > feeder_state.json
+```
+
+Note: Cleaning the state file is optional - the service will work fine with existing state,
+but resetting it gives you a clean start for your next vacation.
+
 ### Recovery Handling
 The feeder can detect and handle missed feeds (e.g., due to power outages):
 
