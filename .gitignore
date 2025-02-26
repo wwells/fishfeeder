@@ -41,3 +41,6 @@ ENV/
 *.original
 *.bak
 *~
+
+# Log files
+fishfeeder.log*

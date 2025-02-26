@@ -1,6 +1,8 @@
 # Automatic Fish Feeder
 
-Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedule.
+Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedule.  Geared to work as a "vacation feeder" with reasonable SLA, but not overly critical.
+
+This could be extended to expose the state file via a web API, but that's not currently implemented (don't want to expose the PI through a home router). In that scenario would be a bit more resilient to failure to "call the neighbors" if something looks _fishy_. :drum:
 
 # Software
 
@@ -64,6 +66,22 @@ The feeder can detect and handle missed feeds (e.g., due to power outages):
 - Two recovery modes:
   - "feed": Attempt to feed if within recovery window
   - "skip": Log the miss but wait for next scheduled feed
+
+### Power Failure Handling
+The system is designed to handle power interruptions:
+
+- **Power loss between feeds**
+  - Service auto-restarts when power returns
+  - Checks for and handles any missed feeds
+  - Resumes normal schedule
+
+- **Power loss during feed**
+  - Motor returns to safe state on restart
+  - Recovery mode handles incomplete feed
+  - At worst: one missed feed
+
+All feed attempts are tracked in the state file, ensuring the system
+can properly recover after any interruption.
 
 Configure recovery behavior in `config.py`:
 ```python
@@ -145,3 +163,35 @@ Inspired by https://www.the-diy-life.com/make-an-arduino-based-automatic-fish-fe
 Source: https://ben.akrin.com/driving-a-28byj-48-stepper-motor-uln2003-driver-with-a-raspberry-pi/
 
 ![Wiring Diagram](assets/wiring.png)
+
+## Troubleshooting
+
+### Pre-Vacation Checklist
+1. Test hardware: `python feeder.py --test-hardware`
+2. Verify schedule: `python feeder.py --test-schedule`
+3. Check service: `sudo systemctl status fishfeeder`
+4. Verify timezone: `date` shows correct time
+5. Test recovery: `python feeder.py --test-recovery`
+
+### Common Issues
+
+**Motor not turning**
+- Check wiring connections
+- Verify GPIO pins in config.py match actual wiring
+- Run calibration: `python feeder.py --calibrate`
+
+**Missed Feeds**
+- Check logs: `tail -f fishfeeder.log`
+- Verify service running: `systemctl status fishfeeder`
+- Check state: `python feeder.py --status`
+- Review recovery settings in config.py
+
+**Service Won't Start**
+- Check permissions on .venv directory
+- Verify paths in fishfeeder.service
+- Look for errors: `journalctl -u fishfeeder`
+
+### Log Locations
+- Application logs: `fishfeeder.log`
+- Service logs: `journalctl -u fishfeeder`
+- State file: `feeder_state.json`
