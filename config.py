@@ -19,8 +19,8 @@ SCHEDULER_HEARTBEAT = 300  # How often to check schedule in production (seconds)
 TEST_INTERVAL = 5    # seconds between feeds in test mode
 TEST_ITERATIONS = 2  # number of test feeds to perform
 TEST_SCHEDULE_ITERATIONS = 3  # number of schedule test feeds to perform
-TEST_SCHEDULE_INTERVAL = 1  # Minutes between feeds when testing schedule
-TEST_SCHEDULER_HEARTBEAT = 30 # How often to check schedule in test mode (seconds)
+TEST_SCHEDULE_INTERVAL = 10  # Seconds between feeds when testing schedule
+TEST_SCHEDULER_HEARTBEAT = 1 # How often to check schedule in test mode (seconds)
 
 # Logging
 LOG_FILE = "fishfeeder.log"

@@ -167,7 +167,7 @@ def main():
         elif args.test:
             feeder.test_mode()
         elif args.test_schedule:
-            schedule.every(TEST_SCHEDULE_INTERVAL).minutes.at(":00").do(feeder.feed_fish)
+            schedule.every(TEST_SCHEDULE_INTERVAL).seconds.do(feeder.feed_fish)
             next_feed = feeder.get_next_feed_time()
             logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} minutes")
             logging.info(f"Next feed scheduled for: {next_feed}")
@@ -179,14 +179,10 @@ def main():
                 if schedule.run_pending():
                     logging.debug("Found pending job")
                     feeds_completed += 1
-                    if feeds_completed < TEST_SCHEDULE_ITERATIONS:
-                        time.sleep(0.1)  # Brief delay to allow schedule to update
-                        next_feed = feeder.get_next_feed_time()
-                        logging.info(f"Next feed scheduled for: {next_feed}")
-                    else:
+                    if feeds_completed == TEST_SCHEDULE_ITERATIONS:
                         logging.info("Schedule test completed")
                 else:
-                    logging.debug(f"No pending jobs. Next run at: {schedule.next_run()}")
+                    logging.info(f"No pending jobs. Next run at: {schedule.next_run()}")
                 time.sleep(TEST_SCHEDULER_HEARTBEAT)
         else:
             state = feeder.load_state()
