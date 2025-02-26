@@ -34,6 +34,7 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 
 - Normal mode: `python feeder.py`
 - Test mode: `python feeder.py --test`
+- Calibration mode: `python feeder.py --calibrate`
 
 ## Hardware Requirements
 
@@ -41,7 +42,11 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 - Stepper Motor (28BYJ-48 with ULN2003 driver)
   - Step Angle: 5.625° × 1/64
   - Steps per Revolution: 512 (using half-stepping)
-- Fish Food Dispenser Disk
+- 3d Print base disk / compartment disk
+
+## 3d Printing assets
+
+Inspired by https://www.the-diy-life.com/make-an-arduino-based-automatic-fish-feeder/.   Assets for printing are in the assets dir.
 
 ## Timezones
 
