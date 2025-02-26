@@ -174,18 +174,20 @@ def main():
             logging.info(f"Will run {TEST_SCHEDULE_ITERATIONS} times")
 
             feeds_completed = 0
+            last_run = None
             while feeds_completed < TEST_SCHEDULE_ITERATIONS:
                 logging.debug("Checking schedule...")
-                pending = schedule.run_pending()
-                logging.debug(f"run_pending() returned: {pending}")
-                if pending:
-                    logging.debug("Found pending job")
+                schedule.run_pending()
+                next_run = schedule.next_run()
+                # If next_run has changed, we must have just completed a feed
+                if last_run != next_run:
                     feeds_completed += 1
+                    last_run = next_run
                     if feeds_completed == TEST_SCHEDULE_ITERATIONS:
                         logging.info("Schedule test completed")
                         break
-                else:
-                    logging.info(f"No pending jobs. Next run at: {schedule.next_run()}")
+                    else:
+                        logging.info(f"Next feed scheduled for: {next_run}")
                 time.sleep(TEST_SCHEDULER_HEARTBEAT)
         else:
             state = feeder.load_state()
