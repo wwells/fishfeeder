@@ -13,7 +13,7 @@ STEP_DELAY = 0.01              # Delay between steps (controls speed)
 FEED_TIME = "08:00"    # 24-hour format
 FEED_DURATION = 1      # seconds to hold position
 FEEDS_PER_DAY = 2     # Number of feed compartments to dispense daily
-TEST_SCHEDULE_INTERVAL = 2  # Minutes between feeds when testing schedule
+TEST_SCHEDULE_INTERVAL = 1  # Minutes between feeds when testing schedule
 
 # Test mode settings
 TEST_INTERVAL = 5    # seconds between feeds in test mode

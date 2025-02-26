@@ -98,6 +98,7 @@ class FishFeeder:
             logging.info("Feed cycle completed")
         except Exception as e:
             logging.error(f"Error during feeding: {str(e)}")
+            raise  # Re-raise to ensure schedule knows the feed failed
 
     def test_mode(self):
         logging.info(f"Starting test mode: {TEST_ITERATIONS} iterations")
@@ -134,6 +135,13 @@ class FishFeeder:
         except FileNotFoundError:
             return {'last_feed': None, 'active': False}
 
+    def get_next_feed_time(self):
+        """Calculate and return the next scheduled feed time"""
+        next_run = schedule.next_run()
+        if next_run:
+            return next_run.strftime("%Y-%m-%d %H:%M:%S")
+        return None
+
 def main():
     parser = argparse.ArgumentParser(description='Automatic Fish Feeder')
     parser.add_argument('--test', action='store_true', help='Run in test mode')
@@ -159,25 +167,41 @@ def main():
         elif args.test:
             feeder.test_mode()
         elif args.test_schedule:
-            logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} minutes")
             schedule.every(TEST_SCHEDULE_INTERVAL).minutes.do(feeder.feed_fish)
-            while True:
-                schedule.run_pending()
+            next_feed = feeder.get_next_feed_time()
+            logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} minutes")
+            logging.info(f"Next feed scheduled for: {next_feed}")
+            logging.info(f"Will run {TEST_SCHEDULE_ITERATIONS} times")
+
+            feeds_completed = 0
+            while feeds_completed < TEST_SCHEDULE_ITERATIONS:
+                if schedule.run_pending():
+                    feeds_completed += 1
+                    if feeds_completed < TEST_SCHEDULE_ITERATIONS:
+                        next_feed = feeder.get_next_feed_time()
+                        logging.info(f"Next feed scheduled for: {next_feed}")
                 time.sleep(60)
+            logging.info("Schedule test completed")
         else:
-            # Load last state
             state = feeder.load_state()
             if state['last_feed']:
                 last_feed = datetime.fromisoformat(state['last_feed'])
                 logging.info(f"Last feed occurred at: {last_feed}")
 
             schedule.every().day.at(FEED_TIME).do(feeder.feed_fish)
+            next_feed = feeder.get_next_feed_time()
             logging.info(f"Scheduled daily feeding at {FEED_TIME}")
+            logging.info(f"Next feed scheduled for: {next_feed}")
 
             while True:
-                schedule.run_pending()
+                try:
+                    schedule.run_pending()
+                except Exception as e:
+                    logging.error(f"Schedule interrupted: {str(e)}")
+                    # Could implement retry logic here
                 time.sleep(60)
     except KeyboardInterrupt:
+        logging.warning("Program manually interrupted - schedule stopped")
         logging.info("Program interrupted by user")
     finally:
         feeder.cleanup()
