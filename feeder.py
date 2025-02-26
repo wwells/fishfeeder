@@ -177,11 +177,12 @@ def main():
             while feeds_completed < TEST_SCHEDULE_ITERATIONS:
                 if schedule.run_pending():
                     feeds_completed += 1
-                    if feeds_completed < TEST_SCHEDULE_ITERATIONS:
+                    if feeds_completed == TEST_SCHEDULE_ITERATIONS:
+                        logging.info("Schedule test completed")
+                    else:
                         next_feed = feeder.get_next_feed_time()
                         logging.info(f"Next feed scheduled for: {next_feed}")
-                time.sleep(60)
-            logging.info("Schedule test completed")
+                time.sleep(1) # slow down scheduler checks
         else:
             state = feeder.load_state()
             if state['last_feed']:
