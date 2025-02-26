@@ -97,8 +97,20 @@ class FishFeeder:
             self.save_state()  # Record successful feed
             logging.info("Feed cycle completed")
         except Exception as e:
+            # Save failed state
+            state = {
+                'last_feed': datetime.now().isoformat(),
+                'active': True,
+                'feed_count': self.load_state().get('feed_count', {'total': 0, 'successful': 0, 'failed': 0}),
+                'last_feed_status': 'failed',
+                'next_scheduled_feed': self.get_next_feed_time()
+            }
+            state['feed_count']['total'] += 1
+            state['feed_count']['failed'] += 1
+            with open(STATE_FILE, 'w') as f:
+                json.dump(state, f)
             logging.error(f"Error during feeding: {str(e)}")
-            raise  # Re-raise to ensure schedule knows the feed failed
+            raise
 
     def test_mode(self):
         logging.info(f"Starting test mode: {TEST_ITERATIONS} iterations")
@@ -123,8 +135,25 @@ class FishFeeder:
     def save_state(self):
         state = {
             'last_feed': datetime.now().isoformat(),
-            'active': True
+            'active': True,
+            'feed_count': {
+                'total': 0,
+                'successful': 0,
+                'failed': 0
+            },
+            'last_feed_status': 'success',
+            'next_scheduled_feed': self.get_next_feed_time()
         }
+        # Load existing state to preserve counts
+        try:
+            old_state = self.load_state()
+            if old_state.get('feed_count'):
+                state['feed_count'] = old_state['feed_count']
+                state['feed_count']['total'] += 1
+                state['feed_count']['successful'] += 1
+        except Exception as e:
+            logging.warning(f"Could not load previous state: {e}")
+
         with open(STATE_FILE, 'w') as f:
             json.dump(state, f)
 
@@ -149,6 +178,8 @@ def main():
     parser.add_argument('--status', action='store_true', help='Show feeder status and exit')
     parser.add_argument('--test-schedule', action='store_true',
                        help='Test schedule with shorter intervals (every few minutes)')
+    parser.add_argument('--test-state', action='store_true',
+                       help='Test state file handling with success/failure scenarios')
     args = parser.parse_args()
 
     feeder = FishFeeder()
@@ -157,7 +188,17 @@ def main():
         if args.status:
             state = feeder.load_state()
             if state['last_feed']:
-                logging.info(f"Status: Last feed: {state['last_feed']}, Active: {state['active']}")
+                feed_count = state.get('feed_count', {'total': 0, 'successful': 0, 'failed': 0})
+                status_msg = [
+                    f"Last feed: {state['last_feed']}",
+                    f"Status: {state.get('last_feed_status', 'unknown')}",
+                    f"Active: {state['active']}",
+                    f"Total feeds: {feed_count['total']}",
+                    f"Successful: {feed_count['successful']}",
+                    f"Failed: {feed_count['failed']}",
+                    f"Next scheduled: {state.get('next_scheduled_feed', 'unknown')}"
+                ]
+                logging.info("Status:\n - " + "\n - ".join(status_msg))
             else:
                 logging.info("Status: No previous feeds recorded")
             return
@@ -187,6 +228,28 @@ def main():
                 time.sleep(TEST_SCHEDULER_HEARTBEAT)
                 schedule.run_pending()
             logging.info("Schedule test completed")
+        elif args.test_state:
+            logging.info("Testing state file handling...")
+
+            # Test successful feed
+            logging.info("Testing successful feed...")
+            feeder.feed_fish()
+            logging.info("Checking state after success:")
+            os.system(f"{sys.executable} {sys.argv[0]} --status")
+
+            # Test failed feed by forcing an error
+            logging.info("\nTesting failed feed...")
+            try:
+                # Temporarily modify STEPS_PER_FEED to force an error
+                old_steps = STEPS_PER_FEED
+                globals()['STEPS_PER_FEED'] = -1  # Invalid value
+                feeder.feed_fish()
+            except:
+                globals()['STEPS_PER_FEED'] = old_steps
+                logging.info("Expected error occurred")
+
+            logging.info("Checking state after failure:")
+            os.system(f"{sys.executable} {sys.argv[0]} --status")
         else:
             state = feeder.load_state()
             if state['last_feed']:

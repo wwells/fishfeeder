@@ -38,6 +38,8 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 - Test mode: `python feeder.py --test`
 - Calibration mode: `python feeder.py --calibrate`
 - Test schedule mode: `python feeder.py --test-schedule`
+- Test state tracking: `python feeder.py --test-state`
+- Show status: `python feeder.py --status`
 
 ## Timezones
 
@@ -60,3 +62,11 @@ Inspired by https://www.the-diy-life.com/make-an-arduino-based-automatic-fish-fe
 Source: https://ben.akrin.com/driving-a-28byj-48-stepper-motor-uln2003-driver-with-a-raspberry-pi/
 
 ![Wiring Diagram](assets/wiring.png)
+
+### Status Information
+The status command shows:
+- Last feed time
+- Feed status (success/failure)
+- Feed counts (total/successful/failed)
+- Next scheduled feed
+- Active state
