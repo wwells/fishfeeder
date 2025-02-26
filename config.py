@@ -30,6 +30,9 @@ TEST_SCHEDULER_HEARTBEAT = 5 # How often to check schedule in test mode (seconds
 # Logging
 LOG_FILE = "fishfeeder.log"
 LOG_LEVEL = "INFO"
+# Log rotation settings
+LOG_MAX_SIZE = 1024 * 1024  # 1MB
+LOG_BACKUP_COUNT = 5        # Keep 5 backup files
 
 # Add to config.py
 STATE_FILE = "feeder_state.json"  # Track last feed time and active status

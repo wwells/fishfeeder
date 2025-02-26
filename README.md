@@ -32,11 +32,18 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 3. Configure your settings in `config.py`
 4. Run the feeder: `python feeder.py`
 
+### Timezones
+
+Remain super fun ;)   Be sure your PI is set to the desired timezone to ensure the schedule meets your expectations (`sudo raspi-config` and select `Localisation`)
+
 ### Service Installation
 To run as a system service:
 ```bash
 # Copy service file
 sudo cp fishfeeder.service /etc/systemd/system/
+
+# Set up log rotation
+sudo cp fishfeeder.logrotate /etc/logrotate.d/fishfeeder
 
 # Reload systemd
 sudo systemctl daemon-reload
@@ -48,36 +55,6 @@ sudo systemctl start fishfeeder
 # Check status
 sudo systemctl status fishfeeder
 ```
-
-### Testing Service Operation
-```bash
-# Test service behavior
-python feeder.py --test-service
-
-# In another terminal, try:
-sudo systemctl status fishfeeder  # Check logs
-sudo systemctl stop fishfeeder   # Test clean shutdown
-sudo journalctl -u fishfeeder    # View all service logs
-```
-
-## Usage
-
-- Normal mode: `python feeder.py`
-- Calibration mode: `python feeder.py --calibrate`
-- Test hardware: `python feeder.py --test-hardware`
-- Test schedule mode: `python feeder.py --test-schedule`
-- Test state tracking: `python feeder.py --test-state`
-- Test recovery: `python feeder.py --test-recovery`
-- Test service: `python feeder.py --test-service`
-- Show status: `python feeder.py --status`
-
-### Test Modes
-- `--test-hardware`: Quick hardware test - runs 2 feed cycles 5 seconds apart
-- `--test-schedule`: Tests scheduling with shorter intervals
-- `--test-state`: Tests state file handling with success/failure scenarios
-- `--test-recovery`: Tests recovery handling with simulated missed feeds
-- `--test-service`: Tests systemd service behavior (signal handling, cleanup)
-- `--calibrate`: Performs one full motor revolution for calibration
 
 ### Recovery Handling
 The feeder can detect and handle missed feeds (e.g., due to power outages):
@@ -103,9 +80,52 @@ The status command shows:
 - Next scheduled feed
 - Active state
 
-## Timezones
+## Usage
 
-Remain super fun ;)   Be sure your PI is set to the desired timezone to ensure the schedule meets your expectations (`sudo raspi-config` and select `Localisation`)
+- Normal mode: `python feeder.py`
+- Calibration mode: `python feeder.py --calibrate`
+- Test hardware: `python feeder.py --test-hardware`
+- Test schedule mode: `python feeder.py --test-schedule`
+- Test state tracking: `python feeder.py --test-state`
+- Test recovery: `python feeder.py --test-recovery`
+- Test service: `python feeder.py --test-service`
+- Show status: `python feeder.py --status`
+
+## Test Modes
+- `--test-hardware`: Quick hardware test - runs 2 feed cycles 5 seconds apart
+- `--test-schedule`: Tests scheduling with shorter intervals
+- `--test-state`: Tests state file handling with success/failure scenarios
+- `--test-recovery`: Tests recovery handling with simulated missed feeds
+- `--test-service`: Tests systemd service behavior (signal handling, cleanup)
+- `--calibrate`: Performs one full motor revolution for calibration
+
+### Testing Service Operation
+There are two ways to test the service:
+
+1. Test service behavior without installation:
+```bash
+# This runs a 30-second test of signal handling and cleanup
+python feeder.py --test-service
+```
+
+2. Test installed service:
+```bash
+# Start the service
+sudo systemctl start fishfeeder
+
+# Monitor the logs
+sudo journalctl -fu fishfeeder
+
+# In another terminal, test clean shutdown
+sudo systemctl stop fishfeeder
+```
+
+The service should:
+- Start cleanly and show initialization in logs
+- Handle daily feeds according to schedule
+- Clean up GPIO pins on shutdown
+- Maintain state between restarts
+
 
 # Hardware Requirements
 

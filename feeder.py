@@ -11,6 +11,7 @@ from config import *
 from config import (RECOVERY_ENABLED, RECOVERY_MODE, MAX_RECOVERY_DELAY,
                    FEED_TIME, SCHEDULER_HEARTBEAT, TEST_SCHEDULER_HEARTBEAT,
                    TEST_SCHEDULE_INTERVAL, TEST_SCHEDULE_ITERATIONS)
+from logging.handlers import RotatingFileHandler
 
 class FishFeeder:
     def __init__(self):
@@ -41,8 +42,12 @@ class FishFeeder:
             level=getattr(logging, LOG_LEVEL),
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[
-                # File handler
-                logging.FileHandler(LOG_FILE),
+                # Rotating file handler
+                RotatingFileHandler(
+                    LOG_FILE,
+                    maxBytes=LOG_MAX_SIZE,
+                    backupCount=LOG_BACKUP_COUNT
+                ),
                 # Console handler
                 logging.StreamHandler()
             ]
