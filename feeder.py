@@ -173,6 +173,7 @@ def main():
                 nonlocal feeds_completed
                 feeder.feed_fish()
                 feeds_completed += 1
+                logging.info(f"Feed {feeds_completed}/{TEST_SCHEDULE_ITERATIONS} completed")
                 if feeds_completed >= TEST_SCHEDULE_ITERATIONS:
                     return schedule.CancelJob
 
