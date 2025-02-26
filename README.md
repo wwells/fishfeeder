@@ -32,15 +32,43 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 3. Configure your settings in `config.py`
 4. Run the feeder: `python feeder.py`
 
+### Service Installation
+To run as a system service:
+```bash
+# Copy service file
+sudo cp fishfeeder.service /etc/systemd/system/
+
+# Reload systemd
+sudo systemctl daemon-reload
+
+# Enable and start service
+sudo systemctl enable fishfeeder
+sudo systemctl start fishfeeder
+
+# Check status
+sudo systemctl status fishfeeder
+```
+
+### Testing Service Operation
+```bash
+# Test service behavior
+python feeder.py --test-service
+
+# In another terminal, try:
+sudo systemctl status fishfeeder  # Check logs
+sudo systemctl stop fishfeeder   # Test clean shutdown
+sudo journalctl -u fishfeeder    # View all service logs
+```
+
 ## Usage
 
 - Normal mode: `python feeder.py`
 - Calibration mode: `python feeder.py --calibrate`
-- Test mode: `python feeder.py --test`
 - Test hardware: `python feeder.py --test-hardware`
 - Test schedule mode: `python feeder.py --test-schedule`
 - Test state tracking: `python feeder.py --test-state`
 - Test recovery: `python feeder.py --test-recovery`
+- Test service: `python feeder.py --test-service`
 - Show status: `python feeder.py --status`
 
 ### Test Modes
@@ -48,6 +76,7 @@ Raspberry Pi-powered automatic fish feeder that dispenses food on a daily schedu
 - `--test-schedule`: Tests scheduling with shorter intervals
 - `--test-state`: Tests state file handling with success/failure scenarios
 - `--test-recovery`: Tests recovery handling with simulated missed feeds
+- `--test-service`: Tests systemd service behavior (signal handling, cleanup)
 - `--calibrate`: Performs one full motor revolution for calibration
 
 ### Recovery Handling

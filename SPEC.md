@@ -65,36 +65,37 @@ Shared project specification to support ai coding sessions.
     - [x] Update feed_fish() to handle multiple rotations
     - [x] Test with actual food amounts
 
-### Phase 3: Scheduling (Next Up)
+### Phase 3: Scheduling ✅
 - [x] Test schedule functionality
     - [x] Test with shorter intervals for verification (--test-schedule)
     - [x] Verify timing accuracy
     - [x] Test schedule.every().day behavior
-- [ ] Enhance schedule logging
+- [x] Enhance schedule logging
     - [x] Log next scheduled feed time on startup
     - [x] Log schedule changes/interruptions
     - [x] Add state file tracking
         - [x] Track feed success/failure
         - [x] Track feed counts
         - [x] Add test mode for state verification
-- [ ] Implement recovery handling (Next)
-    - [ ] Use state file to detect missed feeds
-    - [ ] Define recovery behavior (skip vs feed)
-    - [ ] Test recovery scenarios
+- [x] Implement recovery handling
+    - [x] Use state file to detect missed feeds
+    - [x] Define recovery behavior (skip vs feed)
+    - [x] Test recovery scenarios
 
-### Phase 4: Production Ready
+### Phase 4: Production Ready (Next)
 - [ ] Create systemd service file
     - [ ] Configure with venv path
     - [ ] Set up auto-restart
     - [ ] Configure logging
+    - [ ] Test service operation
 - [ ] Implement log rotation
     - [ ] Add max log size
     - [ ] Configure backup count
     - [ ] Test log cleanup
 - [ ] Add status monitoring
     - [x] Basic status (last feed, active state)
-    - [ ] Next scheduled feed time
-    - [ ] Feed success/failure stats
+    - [x] Next scheduled feed time
+    - [x] Feed success/failure stats
     - [ ] GPIO/hardware status
     - [ ] Service status
 - [ ] Complete documentation

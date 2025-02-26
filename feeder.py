@@ -8,6 +8,9 @@ import sys
 import json
 from datetime import datetime
 from config import *
+from config import (RECOVERY_ENABLED, RECOVERY_MODE, MAX_RECOVERY_DELAY,
+                   FEED_TIME, SCHEDULER_HEARTBEAT, TEST_SCHEDULER_HEARTBEAT,
+                   TEST_SCHEDULE_INTERVAL, TEST_SCHEDULE_ITERATIONS)
 
 class FishFeeder:
     def __init__(self):
@@ -207,6 +210,8 @@ def main():
                        help='Test state file handling with success/failure scenarios')
     parser.add_argument('--test-recovery', action='store_true',
                        help='Test recovery handling with simulated missed feeds')
+    parser.add_argument('--test-service', action='store_true',
+                       help='Test service behavior (signal handling, cleanup)')
     args = parser.parse_args()
 
     feeder = FishFeeder()
@@ -293,6 +298,30 @@ def main():
 
             logging.info("Simulated missed feed. Checking recovery...")
             feeder.check_missed_feeds()
+        elif args.test_service:
+            logging.info("Testing service behavior...")
+
+            def handle_sigterm(signum, frame):
+                logging.info("Received SIGTERM signal")
+                raise KeyboardInterrupt
+
+            import signal
+            signal.signal(signal.SIGTERM, handle_sigterm)
+
+            logging.info("Service test started - will run for 30 seconds")
+            logging.info("Test commands:")
+            logging.info("  sudo systemctl status fishfeeder")
+            logging.info("  sudo systemctl stop fishfeeder")
+
+            # Schedule a few test feeds
+            schedule.every(10).seconds.do(feeder.feed_fish)
+
+            end_time = time.time() + 30
+            while time.time() < end_time:
+                schedule.run_pending()
+                time.sleep(1)
+
+            logging.info("Service test completed")
         else:
             state = feeder.load_state()
             if state['last_feed']:

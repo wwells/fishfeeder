@@ -5,11 +5,17 @@ After=network.target
 [Service]
 Type=simple
 User=fishpi
+Group=fishpi
 WorkingDirectory=/home/fishpi/fishfeeder
-Environment=PATH=/home/fishpi/fishfeeder/.venv/bin:$PATH
+# Disable Python output buffering to ensure logs appear immediately in journal
+# This is critical for monitoring feed cycles and debugging issues
+Environment=PYTHONUNBUFFERED=1
 ExecStart=/home/fishpi/fishfeeder/.venv/bin/python /home/fishpi/fishfeeder/feeder.py
 Restart=always
 RestartSec=10
+
+# Give the service time to cleanup GPIO on shutdown
+TimeoutStopSec=10
 
 [Install]
 WantedBy=multi-user.target
