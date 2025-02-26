@@ -1,0 +1,11 @@
+/home/fishpi/fishfeeder/fishfeeder.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    create 644 fishpi fishpi
+    postrotate
+        systemctl restart fishfeeder
+    endscript
+}
