@@ -331,20 +331,27 @@ def main():
             logging.info("Service test completed")
         elif args.test_logs:
             logging.info("Testing log rotation...")
-            logging.info("Will generate enough logs to trigger rotation")
+            logging.info(f"Will generate logs until we exceed {LOG_MAX_SIZE/1024:.0f}KB")
+
+            # Create a longer message to fill logs faster
+            test_msg = "This is a longer test message with lots of text " * 10
 
             # Generate enough logs to trigger rotation
             for i in range(10000):
-                logging.info(f"Test log entry {i} to force rotation")
+                logging.info(f"Test log entry {i}: {test_msg}")
                 if i % 1000 == 0:
-                    logging.info(f"Generated {i} log entries")
+                    log_size = os.path.getsize(LOG_FILE)
+                    logging.info(f"Generated {i} log entries. Log size: {log_size/1024:.1f}KB")
+                    if log_size > LOG_MAX_SIZE * 2:
+                        break
 
             # Check for rotated files
             import glob
             log_files = glob.glob(f"{LOG_FILE}.*")
             logging.info(f"Found {len(log_files)} rotated log files:")
             for log_file in log_files:
-                logging.info(f"  - {log_file}")
+                size = os.path.getsize(log_file)
+                logging.info(f"  - {log_file} ({size/1024:.1f}KB)")
         else:
             state = feeder.load_state()
             if state['last_feed']:
