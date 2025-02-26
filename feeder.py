@@ -180,6 +180,7 @@ def main():
                     logging.debug("Found pending job")
                     feeds_completed += 1
                     if feeds_completed < TEST_SCHEDULE_ITERATIONS:
+                        time.sleep(0.1)  # Brief delay to allow schedule to update
                         next_feed = feeder.get_next_feed_time()
                         logging.info(f"Next feed scheduled for: {next_feed}")
                     else:
