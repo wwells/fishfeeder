@@ -139,6 +139,8 @@ def main():
     parser.add_argument('--test', action='store_true', help='Run in test mode')
     parser.add_argument('--calibrate', action='store_true', help='Run calibration mode')
     parser.add_argument('--status', action='store_true', help='Show feeder status and exit')
+    parser.add_argument('--test-schedule', action='store_true',
+                       help='Test schedule with shorter intervals (every few minutes)')
     args = parser.parse_args()
 
     feeder = FishFeeder()
@@ -156,6 +158,12 @@ def main():
             feeder.calibrate_mode()
         elif args.test:
             feeder.test_mode()
+        elif args.test_schedule:
+            logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} minutes")
+            schedule.every(TEST_SCHEDULE_INTERVAL).minutes.do(feeder.feed_fish)
+            while True:
+                schedule.run_pending()
+                time.sleep(60)
         else:
             # Load last state
             state = feeder.load_state()

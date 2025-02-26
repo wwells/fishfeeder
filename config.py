@@ -10,9 +10,10 @@ STEP_DELAY = 0.01              # Delay between steps (controls speed)
 # - Full revolution = 512 steps (360° / (5.625° × 1/64) × 8)
 
 # Schedule settings
-FEED_TIME = "10:00"    # 24-hour format
+FEED_TIME = "08:00"    # 24-hour format
 FEED_DURATION = 1      # seconds to hold position
 FEEDS_PER_DAY = 2     # Number of feed compartments to dispense daily
+TEST_SCHEDULE_INTERVAL = 2  # Minutes between feeds when testing schedule
 
 # Test mode settings
 TEST_INTERVAL = 5    # seconds between feeds in test mode
