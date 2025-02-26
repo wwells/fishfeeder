@@ -167,7 +167,7 @@ def main():
         elif args.test:
             feeder.test_mode()
         elif args.test_schedule:
-            schedule.every(TEST_SCHEDULE_INTERVAL).minutes.do(feeder.feed_fish)
+            schedule.every(TEST_SCHEDULE_INTERVAL).minutes.at(":00").do(feeder.feed_fish)
             next_feed = feeder.get_next_feed_time()
             logging.info(f"Testing schedule every {TEST_SCHEDULE_INTERVAL} minutes")
             logging.info(f"Next feed scheduled for: {next_feed}")
