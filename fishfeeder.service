@@ -11,7 +11,7 @@ WorkingDirectory=/home/fishpi/fishfeeder
 # This is critical for monitoring feed cycles and debugging issues
 Environment=PYTHONUNBUFFERED=1
 ExecStart=/home/fishpi/fishfeeder/.venv/bin/python /home/fishpi/fishfeeder/feeder.py
-Restart=always
+Restart=on-failure
 RestartSec=10
 
 # Give the service time to cleanup GPIO on shutdown
