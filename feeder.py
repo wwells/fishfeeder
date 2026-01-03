@@ -361,6 +361,14 @@ def main():
                 size = os.path.getsize(log_file)
                 logging.info(f"  - {log_file} ({size/1024:.1f}KB)")
         else:
+            # Handle SIGTERM signal from systemd for clean shutdown
+            def handle_sigterm(signum, frame):
+                logging.info("Received SIGTERM signal, shutting down gracefully")
+                raise KeyboardInterrupt
+
+            import signal
+            signal.signal(signal.SIGTERM, handle_sigterm)
+
             state = feeder.load_state()
             if state['last_feed']:
                 last_feed = datetime.fromisoformat(state['last_feed'])

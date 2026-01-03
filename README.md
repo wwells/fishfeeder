@@ -75,6 +75,31 @@ sudo systemctl status fishfeeder
 python feeder.py --status
 ```
 
+**Important:** If the feeder still runs after stopping the service, run these diagnostic commands:
+
+```bash
+# 1. Verify the service is actually stopped (should show "inactive")
+sudo systemctl status fishfeeder
+
+# 2. Check for any running feeder.py processes
+ps aux | grep feeder.py | grep -v grep
+
+# 3. Check systemd logs for recent activity
+sudo journalctl -u fishfeeder --since "10 minutes ago"
+
+# 4. Check for multiple instances or manual runs
+pgrep -af feeder.py
+
+# 5. If processes are found, kill them manually:
+# sudo kill <PID>  # Replace <PID> with the process ID from step 2
+```
+
+**Common causes:**
+- Service didn't stop properly: Run `sudo systemctl stop fishfeeder` again and verify with `sudo systemctl status fishfeeder`
+- Service auto-restarted: Check `Restart=` setting in service file (should be `on-failure`, not `always`)
+- Manual instance running: Someone may have started `python feeder.py` manually in another terminal
+- Recovery mechanism: If the service restarts, it checks for missed feeds and may feed immediately if within the recovery window
+
 The motor will return to a safe state when stopped, and all pins will be cleaned up.
 You can safely leave the service installed for your next vacation.
 
@@ -225,6 +250,40 @@ Source: https://ben.akrin.com/driving-a-28byj-48-stepper-motor-uln2003-driver-wi
 - Check permissions on .venv directory
 - Verify paths in fishfeeder.service
 - Look for errors: `journalctl -u fishfeeder`
+
+**Feeder Still Running After Stop**
+If you stopped the service but the feeder still activates, check:
+
+1. **Verify service is stopped:**
+   ```bash
+   sudo systemctl status fishfeeder  # Should show "inactive (dead)"
+   ```
+
+2. **Check for running processes:**
+   ```bash
+   ps aux | grep feeder.py | grep -v grep
+   pgrep -af feeder.py
+   ```
+   If you see processes, kill them: `sudo kill <PID>`
+
+3. **Check for auto-restart:**
+   ```bash
+   sudo journalctl -u fishfeeder --since "10 minutes ago"
+   ```
+   Look for restart messages. The service should only restart on failure, not manual stop.
+
+4. **Service restarting after stop (fixed in latest version):**
+   If the service restarts after you stop it, this was likely due to improper SIGTERM signal handling. The service now properly handles systemd's stop signal. If you're running an older version:
+   - Update to the latest code (includes SIGTERM signal handling)
+   - Or manually kill the process: `sudo kill <PID>` then verify with `ps aux | grep feeder.py`
+
+5. **Recovery mechanism:**
+   If the service restarts (or you manually run `python feeder.py`), it checks for missed feeds on startup. If it's past the scheduled feed time but within the recovery window (default: 1 hour), it will feed immediately. To prevent this:
+   - Ensure the service is fully stopped: `sudo systemctl stop fishfeeder && sudo systemctl disable fishfeeder`
+   - Don't manually run `python feeder.py` without arguments (use `--status` to check state)
+
+6. **Check for manual instances:**
+   Someone may have started the feeder manually in another terminal. Check all terminals/SSH sessions.
 
 ### Log Locations
 - Application logs: `fishfeeder.log`
