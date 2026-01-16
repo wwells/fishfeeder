@@ -6,6 +6,9 @@
     notifempty
     create 644 fishpi fishpi
     postrotate
-        systemctl restart fishfeeder
+        # Only restart if the service is currently active
+        if systemctl is-active --quiet fishfeeder; then
+            systemctl restart fishfeeder
+        fi
     endscript
 }
